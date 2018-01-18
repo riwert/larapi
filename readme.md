@@ -1,4 +1,4 @@
-# Basic Laravel API
+# Basic Laravel JSON API
 
 CRUD Articles requests:
 - GET /api/articles
