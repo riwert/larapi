@@ -2,17 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Article;
 use App\Http\Resources\Article as ArticleResource;
+use Illuminate\Http\Request;
 
 class ArticleController extends Controller
 {
-    /**
-     * Pagination limit
-     */
-    private $limit = 15;
-
     /**
      * Display a listing of the resource.
      *
@@ -20,7 +15,7 @@ class ArticleController extends Controller
      */
     public function index()
     {
-        // Get 15 articles
+        // Get articles with limit
         $articles = Article::paginate($this->limit);
 
         // Return collection of articles as a resource
@@ -36,11 +31,15 @@ class ArticleController extends Controller
      */
     public function store($id = null, Request $request)
     {
-        // Create new and update existing article
+        // Create new or update existing article
         $article = $request->isMethod('put') ? Article::findOrFail($id) : new Article();
 
-        $article->title = $request->input('title');
-        $article->body = $request->input('body');
+        if ($request->input('title')) {
+            $article->title = $request->input('title');
+        }
+        if ($request->input('body')) {
+            $article->body = $request->input('body');
+        }
 
         if ($article->save()) {
             return new ArticleResource($article);
@@ -55,7 +54,7 @@ class ArticleController extends Controller
      */
     public function show($id)
     {
-        // Get single article or throw error
+        // Get single article or throw 404 error
         $article = Article::findOrFail($id);
 
         // Get single article as a resource
@@ -70,9 +69,10 @@ class ArticleController extends Controller
      */
     public function destroy($id)
     {
-        // Get single article or throw error
+        // Get single article or throw 404 error
         $article = Article::findOrFail($id);
 
+        // Delete and return deleted resource
         if ($article->delete()) {
             return new ArticleResource($article);
         }
