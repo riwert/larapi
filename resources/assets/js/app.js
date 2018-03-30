@@ -15,7 +15,34 @@ window.Vue = require('vue');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-Vue.component('example-component', require('./components/ExampleComponent.vue'));
+Vue.component('navbar', require('./components/Navbar.vue'));
+Vue.component('articles', require('./components/Articles.vue'));
+Vue.component('users', require('./components/Users.vue'));
+Vue.component('pagination', require('./components/Pagination.vue'));
+Vue.component('alert', require('./components/Alert.vue'));
+
+Vue.use('alert');
+Object.defineProperties(Vue.prototype, {
+    $alert: {
+        get () {
+            let el = this
+            while (el) {
+                for (let i = 0; i < el.$children.length; i++) {
+                    const child = el.$children[i]
+                    /* istanbul ignore else */
+                    if (child.$options._componentTag === 'alert') {
+                        return child
+                    }
+                }
+                el = el.$parent
+            }
+            if (process.env.NODE_ENV !== 'production') {
+                console.warn('Alert component must be part of this component scope or any of the parents scope.')
+            }
+            return null
+        }
+    }
+});
 
 const app = new Vue({
     el: '#app'
